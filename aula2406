@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="lx.css">
+</head>
+<body>
+<div id="butao" onclick="clicar()" onmouseenter="entrar()" onmouseout="sair()">
+    botão
+</div>
+<script>
+    function clicar(){
+
+        butao.style.background = 'blue'
+        butao.innerText = 'Clicou'
+        butao.style.color = 'white'
+    }
+    function entrar(){
+
+        butao.style.background = 'red'
+        butao.innerText = 'entrou'
+    }
+    function sair(){
+
+        butao.style.background = 'blueviolet'
+        butao.innerText = 'botão'
+    }
+
+</script>
+</body>
+</html>
+
+
+\\css\\
+#butao{
+   background: blueviolet; 
+   text-align: center;
+   padding: 100px;
+   width: 300px;
+}
