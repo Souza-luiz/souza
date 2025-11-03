@@ -1,0 +1,75 @@
+import React, { useState, useEffect } from "react";
+import { View, Text, Button } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+export default function FichaDiaria() {
+  const [ficha, setFicha] = useState(0);
+  const [ultimaAtualizacao, setUltimaAtualizacao] = useState(null);
+
+  useEffect(() => {
+    carregarFicha();
+  }, []);
+
+  async function carregarFicha() {
+    try {
+      const fichaSalva = await AsyncStorage.getItem("@ficha");
+      const dataSalva = await AsyncStorage.getItem("@ultimaData");
+
+      const hoje = new Date().toDateString();
+
+      // Se não existir ficha salva → cria nova
+      if (!fichaSalva || !dataSalva) {
+        setFicha(1);
+        setUltimaAtualizacao(hoje);
+        await AsyncStorage.setItem("@ficha", "1");
+        await AsyncStorage.setItem("@ultimaData", hoje);
+        return;
+      }
+
+      // Se o dia mudou → renovar ficha (mas sem acumular)
+      if (dataSalva !== hoje) {
+        setFicha(1);
+        setUltimaAtualizacao(hoje);
+        await AsyncStorage.setItem("@ficha", "1");
+        await AsyncStorage.setItem("@ultimaData", hoje);
+      } else {
+        // Mesmo dia → mantém o valor atual
+        setFicha(Number(fichaSalva));
+        setUltimaAtualizacao(dataSalva);
+      }
+    } catch (e) {
+      console.log("Erro ao carregar ficha:", e);
+    }
+  }
+
+  async function gastarFicha() {
+    if (ficha > 0) {
+      const novaFicha = ficha - 1;
+      setFicha(novaFicha);
+      await AsyncStorage.setItem("@ficha", novaFicha.toString());
+    } else {
+      alert("Você já usou sua ficha de hoje!");
+    }
+  }
+
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#F5F5F5",
+      }}
+    >
+      <Text style={{ fontSize: 24, marginBottom: 20 }}>
+        Ficha disponível: {ficha}
+      </Text>
+
+      <Button title="Usar ficha" onPress={gastarFicha} />
+
+      <Text style={{ marginTop: 20, color: "#555" }}>
+        Última atualização: {ultimaAtualizacao || "N/A"}
+      </Text>
+    </View>
+  );
+}
